@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:tj="http://www.thmyelead.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Learning Spring Boot: Spring-a-Gram</title>
+</head>
+<body>
+
+    <div>
+        <h3 th:text="${page.number + 1} + 'of' + ${page.totalPages}" />
+        <table>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Image</th>
+            </tr>
+            <tr th:each="image : ${page.content}">
+                <td th:text="${image.id}" />
+                <td th:text="${image.name}" />
+                <td><img th:src="@{'/images/' + ${image.name} + '/raw'}" /></td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>

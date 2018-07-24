@@ -5,6 +5,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.FileSystemUtils;
@@ -21,16 +23,24 @@ public class ImageService {
 
     private static final String UPLOAD_ROOT = "/home/rporto/upload-dir";
 
-    private ImageRepository repository;
-    private ResourceLoader loader;
-
-    public ImageService() {
-    }
+    private final ImageRepository repository;
+    private final ResourceLoader loader;
 
     @Autowired
     public ImageService(ImageRepository repository, ResourceLoader loader) {
         this.repository = repository;
         this.loader = loader;
+        try {
+            setUp(repository).run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Page<Image> findPage(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public Resource findOneImage(String fileName) {
@@ -45,15 +55,13 @@ public class ImageService {
     }
 
     public void deleteImage(String fileName) throws IOException {
-        /*Didn't work correctly
-        final Image byName = repository.findByName(fileName);*/
-        Image image = new Image(UPLOAD_ROOT + "/" + fileName);
-        repository.delete(image);
+        final Image byName = repository.findByName(fileName);
+        repository.delete(byName);
         Files.deleteIfExists(Paths.get(UPLOAD_ROOT, fileName));
     }
 
     @Bean
-    CommandLineRunner setUp(ImageRepository repository) throws IOException {
+    public CommandLineRunner setUp(ImageRepository repository) throws IOException {
         return (args) -> {
             FileSystemUtils.deleteRecursively(new File(UPLOAD_ROOT));
 

@@ -59,12 +59,12 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.POST, value = BASE_PATH)
     @ResponseBody
-    public ResponseEntity<?> createFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    public ResponseEntity<?> createFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws URISyntaxException {
         try {
             imageService.createImage(file);
             return ResponseEntity.created(new URI(request.getRequestURI()).resolve(file.getOriginalFilename() + "/raw"))
                     .body("Successfully upload " + file.getOriginalFilename());
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to upload " + file.getOriginalFilename() + " => " + e.getMessage());
         }

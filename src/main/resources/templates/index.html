@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Learning Spring Boot: Spring-a-Gram</title>
+    <link rel="stylesheet" href="/main.css" />
 </head>
 <body>
 
@@ -17,7 +18,7 @@
             <tr th:each="image : ${page.content}">
                 <td th:text="${image.id}" />
                 <td th:text="${image.name}" />
-                <td><img th:src="@{'/images/' + ${image.name} + '/raw'}" /></td>
+                <td><img th:src="@{'/images/' + ${image.name} + '/raw'}" class="thumbnail" /></td>
             </tr>
         </table>
     </div>

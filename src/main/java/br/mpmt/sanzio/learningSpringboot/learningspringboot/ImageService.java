@@ -19,10 +19,13 @@ import java.nio.file.Paths;
 @Service
 public class ImageService {
 
-    private static String UPLOAD_ROOT = "upload-dir";
+    private static final String UPLOAD_ROOT = "/home/rporto/upload-dir";
 
-    private final ImageRepository repository;
-    private final ResourceLoader loader;
+    private ImageRepository repository;
+    private ResourceLoader loader;
+
+    public ImageService() {
+    }
 
     @Autowired
     public ImageService(ImageRepository repository, ResourceLoader loader) {
@@ -35,15 +38,17 @@ public class ImageService {
     }
 
     public void createImage(MultipartFile file) throws IOException {
-        if (file.isEmpty()) {
+        if (!file.isEmpty()) {
             Files.copy(file.getInputStream(), Paths.get(UPLOAD_ROOT, file.getOriginalFilename()));
             repository.save(new Image(file.getOriginalFilename()));
         }
     }
 
     public void deleteImage(String fileName) throws IOException {
-        final Image byName = repository.findByName(fileName);
-        repository.delete(byName);
+        /*Didn't work correctly
+        final Image byName = repository.findByName(fileName);*/
+        Image image = new Image(UPLOAD_ROOT + "/" + fileName);
+        repository.delete(image);
         Files.deleteIfExists(Paths.get(UPLOAD_ROOT, fileName));
     }
 
